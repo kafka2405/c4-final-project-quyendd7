@@ -71,4 +71,45 @@ export class TodosAccess {
         }).promise()
         return todoId as string
     }
+
+    async checkExists(todoId: String, userId: String) {
+        const result = await this.docClient
+            .get({
+                TableName: this.todosTable,
+                Key: {
+                    todoId: todoId,
+                    userId: userId
+                }
+            })
+            .promise()
+        return !!result.Item
+    }
+
+    async getTodo(todoId: String, userId: String) {
+        const result = await this.docClient
+            .get({
+                TableName: this.todosTable,
+                Key: {
+                    todoId: todoId,
+                    userId: userId
+                }
+            })
+            .promise()
+        return result.Item
+    }
+
+    updateTodoAttachmentUrl(todoId: string, userId: string, attachmentUrl: string){
+        return this.docClient.update({
+            TableName: this.todosTable,
+            Key: {
+              userId,
+              todoId
+            },
+            UpdateExpression: "set attachmentUrl=:attachmentUrl",
+            ExpressionAttributeValues:{
+                ":attachmentUrl": attachmentUrl,
+            },
+            ReturnValues:"UPDATED_NEW"
+        }).promise()
+    }
 }

@@ -186,6 +186,27 @@ functions:
           - xray:PutTelemetryRecords
         Resource: 
           - '*'
+          
+  DeleteTodoAttachment:
+    handler: src/lambda/http/deleteTodoAttachment.handler
+    events:
+      - http:
+          method: delete
+          path: todos/{todoId}/delete-attachment
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - s3:DeleteObject
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
 
 custom:
   documentation:

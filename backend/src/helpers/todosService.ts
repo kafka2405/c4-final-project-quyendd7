@@ -46,3 +46,14 @@ export async function deleteTodo(
 export async function createAttachmentPresignedUrl(todoId: string): Promise<string> {
     return attachmentUtils.getUploadUrl(todoId)
 }
+
+export async function todoExists(todoId: string, userId: string) {
+    return todosAcess.checkExists(todoId, userId);
+}
+
+export async function deleteTodoAttachment(todoId: string, userId: string) {
+    const thisTodo = await todosAcess.getTodo(todoId, userId);
+    await attachmentUtils.deleteTodoAttachment(thisTodo.attachmentUrl)
+    await todosAcess.updateTodoAttachmentUrl(todoId, userId, "");
+    return thisTodo;
+}

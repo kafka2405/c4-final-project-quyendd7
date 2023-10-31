@@ -9,7 +9,7 @@ const expireTimes = Number(process.env.SINGED_URL_EXPIRATION)
 export class AttachmentUtils {
     constructor(
         private readonly s3 = new XAWS.S3({ signatureVersion: 'v4' }),
-        private readonly bucketName = s3BucketName
+        private readonly bucketName = s3BucketName,
     ) { }
 
     getAttachmentUrl(todoId: string) {
@@ -24,5 +24,14 @@ export class AttachmentUtils {
         })
 
         return url as string
+    }
+
+    deleteTodoAttachment(attachmentUrl: string){
+        const arr = attachmentUrl.split("/")
+        const attachmentKey = arr[arr.length - 1]
+        return this.s3.deleteObject({
+            Bucket: this.bucketName,
+            Key: attachmentKey,
+        })
     }
 }
